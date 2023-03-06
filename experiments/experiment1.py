@@ -19,3 +19,4 @@ Replicate Figure 7 - showing that increasing batch size gives us a linear improv
 
 problems - branin, levy
 '''
+
