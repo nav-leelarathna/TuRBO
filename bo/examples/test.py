@@ -7,9 +7,9 @@ import matplotlib
 from bo.functions import Levy, RoverControl, RobotPush
 
 
-# f = Levy(10)  
+f = Levy(10)  
 # f = RobotPush()
-f = RoverControl()
+# f = RoverControl()
 
 # turbo = TurboM(
 #     f=f,  # Handle to objective function
@@ -33,8 +33,8 @@ turbo = Turbo1(
     lb=f.lb,  # Numpy array specifying lower bounds
     ub=f.ub,  # Numpy array specifying upper bounds
     n_init=20,  # Number of initial bounds from an Latin hypercube design
-    max_evals = 1000,  # Maximum number of evaluations
-    batch_size=10,  # How large batch size TuRBO uses
+    max_evals = 200,  # Maximum number of evaluations
+    batch_size=1,  # How large batch size TuRBO uses
     verbose=True,  # Print information from each batch
     use_ard=True,  # Set to true if you want to use ARD for the GP kernel
     max_cholesky_size=2000,  # When we switch from Cholesky to Lanczos

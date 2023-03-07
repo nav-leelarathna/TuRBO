@@ -1,6 +1,4 @@
-import sys
-sys.path.append("../")
-from bo import TurboM, Turbo1
+
 
 '''
 Things to change
@@ -16,4 +14,6 @@ Secondly, I hypothesize that the benefit gained by the bandits diminished quickl
 Replicate Figure 7 - shows why single agent BO only explores and optimises within a highly local volume of the search space
 
 Replicate Figure 7 - showing that increasing batch size gives us a linear improvement, plotting reward vs steps
+
+Prelim - Looks like regular GP BO works better with Levy(10) than Turbo1. Kind of obvious since a single trust regions spans a smaller space than the global space that GP BO looks at 
 '''
