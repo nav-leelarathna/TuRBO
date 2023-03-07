@@ -18,20 +18,25 @@ class BaseFunction(ABC):
     def getParameterSpace(self) -> ParameterSpace:
         pass
 
+class Ackley(BaseFunction):
+    def __init__(self, dim=10, sign=1)
+        
+        self.dim = dim  
+
+    def __call__(self, x):
+        def objective(x, y):
+ return -20.0 * exp(-0.2 * sqrt(0.5 * (x**2 + y**2)))-exp(0.5 * (cos(2 * 
+  pi * x)+cos(2 * pi * y))) + e + 20
+
 class Levy(BaseFunction):
-    def __init__(self, dim=10, maximise=False):
-        if maximise:
-            self.sign = -1
-        else:
-            self.sign = 1
+    def __init__(self, dim=10, sign=1):
+        # Levy is a minimisation problem, set sign depending on whether model is maximising or minimising
+        self.sign = sign
         self.dim = dim
         self.lb = -5 * np.ones(dim)
         self.ub = 10 * np.ones(dim)
         
     def __call__(self, x):
-        # assert len(x) == self.dim
-        # assert x.ndim == 1
-        # assert np.all(x <= self.ub) and np.all(x >= self.lb)
         def f(x):
             w = 1 + (x - 1.0) / 4.0
             val = np.sin(np.pi * w[0]) ** 2 + \
@@ -48,11 +53,9 @@ class Levy(BaseFunction):
         return ParameterSpace(params)
 
 class RobotPush(BaseFunction):
-    def __init__(self, maximise=True):
-        if maximise:
-            self.sign = -1
-        else:
-            self.sign = 1
+    def __init__(self, sign=-1):
+        # RobotPush is a maximisation problem, set sign depending on whether model is maximising or minimizing
+        self.sign = sign
         self.f = PushReward()
         self.lb = np.array(self.f.xmin)
         self.ub = np.array(self.f.xmax)
@@ -70,11 +73,9 @@ class RobotPush(BaseFunction):
         return ParameterSpace(params) 
 
 class RoverControl(BaseFunction):
-    def __init__(self, maximise=True):
-        if maximise:
-            self.sign = -1
-        else:
-            self.sign = 1
+    def __init__(self, sign=-1):
+        # RoverControl is a maximisation problem, set sign depending on whether model is maximising or minimizing
+        self.sign = sign
         self.lb = None
         self.ub = None
         def l2cost(x, point):

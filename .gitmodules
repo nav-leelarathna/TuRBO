@@ -4,3 +4,9 @@
 [submodule "ebo"]
 	path = ebo
 	url = https://github.com/zi-w/Ensemble-Bayesian-Optimization.git
+[submodule "bock"]
+	path = bock
+	url = https://github.com/ChangYong-Oh/HyperSphere.git
+[submodule "hesbo"]
+	path = hesbo
+	url = https://github.com/aminnayebi/HesBO.git

@@ -1,6 +1,7 @@
 from bo.models.gp_bo import GP_BO
 from emukit.examples.gp_bayesian_optimization.enums import AcquisitionType
 from bo.turbo import TurboM, Turbo1
+from bo.models.my_hesbo import HesBO
 
 class ModelFactory:
     def __init__(self, f,  # Handle to objective function
@@ -17,9 +18,11 @@ class ModelFactory:
         self.acquisition_function = accquisition_function
         self.verbose = verbose
 
-
     def getGP_BO(self, batch_size, max_evals):
         return GP_BO(f=self.f, lb=self.lb, ub=self.ub, n_init=self.n_init, acquisition_type=self.acquisition_function, max_evals=max_evals, batch_size=batch_size, noiseless=True)
+    
+    def getHesbo(self, low_dim, max_evals):
+        return HesBO(f=self.f, lb = self.lb, ub=self.ub, low_dim=low_dim, high_dim=self.f.dim, n_init=self.n_init, max_evals=max_evals)
     
     def getTurbo1(self, batch_size, max_evals, use_ard=True,  # Set to true if you want to use ARD for the GP kernel
     max_cholesky_size=2000,  # When we switch from Cholesky to Lanczos
