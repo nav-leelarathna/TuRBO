@@ -61,7 +61,7 @@ class PushReward:
 
         ret1 = np.linalg.norm(np.array(self.gxy) - ret1)
         ret2 = np.linalg.norm(np.array(self.gxy2) - ret2)
-        return initial_dist - ret1 - ret2 
+        return - (initial_dist - ret1 - ret2 )
 
 
 def main():

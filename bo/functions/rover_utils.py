@@ -200,7 +200,7 @@ class AdditiveCosts:
         self.fns = fns
 
     def __call__(self, X):
-        return np.sum(np.hstack([f(X) for f in self.fns]), axis=1)
+        return - np.sum(np.hstack([f(X) for f in self.fns]), axis=1)
 
 
 class GMCost:

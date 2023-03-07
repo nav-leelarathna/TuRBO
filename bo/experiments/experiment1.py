@@ -16,7 +16,4 @@ Secondly, I hypothesize that the benefit gained by the bandits diminished quickl
 Replicate Figure 7 - shows why single agent BO only explores and optimises within a highly local volume of the search space
 
 Replicate Figure 7 - showing that increasing batch size gives us a linear improvement, plotting reward vs steps
-
-problems - branin, levy
-some function give a reward which needs to be maximised e.g. robot pushing and other give a loss which need to be minimised - e.g. Levy
 '''
