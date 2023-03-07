@@ -3,6 +3,7 @@ import numpy as np
 from emukit.benchmarking.loop_benchmarking.benchmarker import Benchmarker
 from emukit.benchmarking.loop_benchmarking.metrics import MinimumObservedValueMetric, TimeMetric
 from emukit.examples.gp_bayesian_optimization.enums import ModelType, AcquisitionType
+from emukit.examples.models.bohamiann import Bohamiann
 from emukit.examples.gp_bayesian_optimization.optimization_loops import create_bayesian_optimization_loop
 from emukit.examples.gp_bayesian_optimization.single_objective_bayesian_optimization import GPBayesianOptimization
 import matplotlib.pyplot as plt
@@ -23,12 +24,13 @@ parameter_space = func.getParameterSpace()
 
 loops = [
     # ('Random Forest', lambda loop_state: create_bayesian_optimization_loop(loop_state.X, loop_state.Y, parameter_space, AcquisitionType.EI, ModelType.RandomForest)),
+    ('Bohammian', lambda loop_state: create_bayesian_optimization_loop(loop_state.X, loop_state.Y, parameter_space, AcquisitionType.EI, ModelType.BayesianNeuralNetwork)),
     ('Gaussian Process', lambda loop_state: GPBayesianOptimization(parameter_space.parameters, loop_state.X, loop_state.Y, acquisition_type=AcquisitionType.EI, noiseless=True))
 ]
 
 n_repeats = 1 # 10
 n_initial_data = 5
-n_iterations = 200
+n_iterations = 5
 
 metrics = [MinimumObservedValueMetric(), TimeMetric()]
 
