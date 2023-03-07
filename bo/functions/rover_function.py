@@ -1,6 +1,8 @@
-from rover_utils import RoverDomain, PointBSpline, ConstObstacleCost, NegGeom, AABoxes, UnionGeom, AdditiveCosts, \
+from bo.functions.rover_utils import RoverDomain, PointBSpline, ConstObstacleCost, NegGeom, AABoxes, UnionGeom, AdditiveCosts, \
     ConstCost
 import numpy as np
+import sys 
+sys.path.append("")
 
 
 def create_cost_small():
@@ -236,7 +238,7 @@ def main():
 
     raw_x_range = np.repeat(domain.s_range, n_points, axis=1)
 
-    from ebo_core.helper import ConstantOffsetFn, NormalizedInputFn
+    from ebo.ebo_core.helper import ConstantOffsetFn, NormalizedInputFn
 
     # maximum value of f
     f_max = 5.0

@@ -1,6 +1,6 @@
 import sys
 sys.path.append("../")
-from turbo import TurboM, Turbo1
+from bo import TurboM, Turbo1
 
 '''
 Things to change
@@ -18,4 +18,5 @@ Replicate Figure 7 - shows why single agent BO only explores and optimises withi
 Replicate Figure 7 - showing that increasing batch size gives us a linear improvement, plotting reward vs steps
 
 problems - branin, levy
+some function give a reward which needs to be maximised e.g. robot pushing and other give a loss which need to be minimised - e.g. Levy
 '''

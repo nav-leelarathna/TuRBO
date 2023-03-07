@@ -1,27 +1,15 @@
 import sys
 sys.path.append("../")
-from turbo import TurboM, Turbo1
+from bo.turbo import TurboM, Turbo1
 import numpy as np
-import matplotlib
 import matplotlib.pyplot as plt
+import matplotlib
+from bo.functions import Levy, RoverControl, RobotPush
 
-class Levy:
-    def __init__(self, dim=10):
-        self.dim = dim
-        self.lb = -5 * np.ones(dim)
-        self.ub = 10 * np.ones(dim)
-        
-    def __call__(self, x):
-        assert len(x) == self.dim
-        assert x.ndim == 1
-        assert np.all(x <= self.ub) and np.all(x >= self.lb)
-        w = 1 + (x - 1.0) / 4.0
-        val = np.sin(np.pi * w[0]) ** 2 + \
-            np.sum((w[1:self.dim - 1] - 1) ** 2 * (1 + 10 * np.sin(np.pi * w[1:self.dim - 1] + 1) ** 2)) + \
-            (w[self.dim - 1] - 1) ** 2 * (1 + np.sin(2 * np.pi * w[self.dim - 1])**2)
-        return val
 
-f = Levy(10)
+# f = Levy(10)  
+# f = RobotPush()
+f = RoverControl()
 
 # turbo = TurboM(
 #     f=f,  # Handle to objective function
@@ -67,10 +55,10 @@ print("Best value found:\n\tf(x) = %.3f\nObserved at:\n\tx = %s" % (f_best, np.a
 
 fig = plt.figure(figsize=(7, 5))
 matplotlib.rcParams.update({'font.size': 16})
-plt.plot(fX, 'b.', ms=10)  # Plot all evaluated points as blue dots
-plt.plot(np.minimum.accumulate(fX), 'r', lw=3)  # Plot cumulative minimum as a red line
+plt.plot(f.sign*fX, 'b.', ms=10)  # Plot all evaluated points as blue dots
+plt.plot(f.sign*np.minimum.accumulate(fX), 'r', lw=3)  # Plot cumulative minimum as a red line
 plt.xlim([0, len(fX)])
-plt.ylim([0, 30])
+plt.ylim([-10, 30])
 plt.title("10D Levy function")
 
 plt.tight_layout()

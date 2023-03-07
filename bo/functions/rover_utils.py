@@ -1,5 +1,3 @@
-from itertools import izip
-
 import numpy as np
 import scipy.interpolate as si
 
@@ -50,11 +48,11 @@ class PointBSpline(Trajectory):
         self.tck, u = si.splprep(points, k=3)
 
         if start is not None:
-            for a, sv in izip(self.tck[1], start):
+            for a, sv in zip(self.tck[1], start):
                 a[0] = sv
 
         if goal is not None:
-            for a, gv in izip(self.tck[1], goal):
+            for a, gv in zip(self.tck[1], goal):
                 a[-1] = gv
 
     def get_points(self, t):
@@ -111,7 +109,7 @@ class RoverDomain:
             self.goal_miss_cost = simple_rbf
 
         if self.rnd_stream is None:
-            self.rnd_stream = np.random.RandomState(np.random.randint(0, 2 ** 32 - 1))
+            self.rnd_stream = np.random.RandomState(np.random.randint(0, 2 ** 31 - 1))
 
     # return the negative cost which need to be optimized
     def __call__(self, params, n_samples=1000):

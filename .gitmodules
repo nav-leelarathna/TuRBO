@@ -1,0 +1,6 @@
+[submodule "Ensemble-Bayesian-Optimization"]
+	path = Ensemble-Bayesian-Optimization
+	url = https://github.com/zi-w/Ensemble-Bayesian-Optimization.git
+[submodule "ebo"]
+	path = ebo
+	url = https://github.com/zi-w/Ensemble-Bayesian-Optimization.git

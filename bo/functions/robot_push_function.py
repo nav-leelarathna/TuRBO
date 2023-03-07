@@ -1,4 +1,4 @@
-from push_utils import b2WorldInterface, make_base, create_body, end_effector, run_simulation
+from bo.functions.push_utils import b2WorldInterface, make_base, create_body, end_effector, run_simulation
 
 import numpy as np
 
@@ -27,7 +27,7 @@ class PushReward:
         # dimension of the input
         return self._dx
     
-    def __call__(self, argv):
+    def __call__(self, argv, simulate=False):
         # returns the reward of pushing two objects with two robots
         rx = float(argv[0])
         ry = float(argv[1])
@@ -46,7 +46,7 @@ class PushReward:
         
         initial_dist = self.f_max
 
-        world = b2WorldInterface(True)
+        world = b2WorldInterface(simulate)
         oshape, osize, ofriction, odensity, bfriction, hand_shape, hand_size = \
             'circle', 1, 0.01, 0.05, 0.01, 'rectangle', (1, 0.3)
 
