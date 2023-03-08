@@ -6,7 +6,8 @@ from bo.utils import set_seed, getFunc
 import numpy as np
 import pandas as pd 
 import os
-
+import random
+from bo.experiments.sweep import Sweep
 '''
 Things to change
 trust_regions
@@ -27,6 +28,7 @@ Replicate Figure 7 - showing that increasing batch size gives us a linear improv
 Prelim - Looks like regular GP BO works better with Levy(10) than Turbo1. Kind of obvious since a single trust regions spans a smaller space than the global space that GP BO looks at 
 
 GP_BO, Bohammian, Turbo1, Turbo2
+Wendel's theorem - limitation
 '''
 
 def generate_instances(sweep):
@@ -55,15 +57,29 @@ def run_instance(func, model, seed, max_evals, batch_size, n_init):
     numEvaluations = np.array(list(range(X.size)))
     return pd.DataFrame(list(zip(numEvaluations,X,fX)), columns=["evals","X", "fX"])
 
-def sweep():
+def _sweep():
     sweep = {
         "name" : "test",
         "configurations": {
             "seed" : [0,1,2,3,4],
-            "function" : ["Levy", "RoverControl", "RobotPush"],
-            "model" : ["turbo1", "turboM", "gp_bo"],
-            "max_evals" : [50],
-            "batch_size" : [5],
+            "function" : ["Levy_10", "RoverControl", "RobotPush", "Ackley_10"],
+            "model" : ["turbo1", "turboM", "gp_bo", "hesbo"],
+            "max_evals" : [1000],
+            "batch_size" : [10],
+            "n_init" : [5]  
+        }
+    }
+    return sweep
+
+def sweep():
+    sweep = {
+        "name" : "robotPush",
+        "configurations": {
+            "seed" : [0,1,2,3,4],
+            "function" : ["RobotPush"],
+            "model" : ["turbo1", "turboM", "gp_bo", "hesbo"],
+            "max_evals" : [1000],
+            "batch_size" : [10],
             "n_init" : [5]  
         }
     }
@@ -77,9 +93,11 @@ def evaluateSweep(sweep_config):
     colNames = list(sweep["configurations"].keys()) + ["datapath"]
     results = []
     instanceConfigs = generate_instances(sweep_config)
+    random.shuffle(instanceConfigs)
 
     resultsTableFilepath = f"data/{name}/results.csv"
-    for instanceConfig in instanceConfigs:
+    for j, instanceConfig in enumerate(instanceConfigs):
+        print(f"Starting run {i}/{len(instanceConfigs)}")
         print(instanceConfig)
         filename = f"data/{name}/sweep_results/" + "_".join([str(i) for i in instanceConfig]) + ".csv" 
         instance_results = run_instance(*instanceConfig)
@@ -92,10 +110,7 @@ def evaluateSweep(sweep_config):
 
 
 if __name__ == "__main__":
-    sweep = sweep()
-    # instances = generate_instances(sweep)
-    # instance = instances[3]
-    # print(instance)
-    # results = run_instance(*instance)
-    # print(results.head)
-    evaluateSweep(sweep)
+    # sweep = sweep()
+    sweep = Sweep(sweep())
+    sweep.run()
+    # evaluateSweep(sweep)

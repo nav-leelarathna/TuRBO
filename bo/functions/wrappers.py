@@ -19,14 +19,24 @@ class BaseFunction(ABC):
         pass
 
 class Ackley(BaseFunction):
-    def __init__(self, dim=10, sign=1)
-        
+    def __init__(self, dim=10, sign=1):
+        # Ackley is a minimisation function
         self.dim = dim  
+        self.sign = sign
+        self.lb = -5 * np.ones(self.dim)
+        self.ub = 5 * np.ones(self.dim)
 
     def __call__(self, x):
-        def objective(x, y):
- return -20.0 * exp(-0.2 * sqrt(0.5 * (x**2 + y**2)))-exp(0.5 * (cos(2 * 
-  pi * x)+cos(2 * pi * y))) + e + 20
+        assert len(x) == self.dim
+        x = np.asarray_chkfinite(x)  # ValueError if any NaN or Inf
+        n = len(x)
+        s1 = sum( x**2 )
+        s2 = sum( cos( c * x ))
+        return self.sign * (-a*exp( -b*sqrt( s1 / n )) - exp( s2 / n ) + a + exp(1))
+    
+    def getParameterSpace(self) -> ParameterSpace:
+        params = [ContinuousParameter(str(i),self.lb[i],self.ub[i]) for i in range(self.dim)]
+        return ParameterSpace(params)
 
 class Levy(BaseFunction):
     def __init__(self, dim=10, sign=1):
@@ -49,7 +59,7 @@ class Levy(BaseFunction):
         return ret
     
     def getParameterSpace(self):
-        params = [ContinuousParameter(str(i),self.lb[i],self.ub[i]) for i in range(self.dim)]
+        params = [ContinuousParameter(str(i),self.lb[i], self.ub[i]) for i in range(self.dim)]
         return ParameterSpace(params)
 
 class RobotPush(BaseFunction):

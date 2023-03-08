@@ -46,7 +46,7 @@ class ModelFactory:
         dtype=dtype
     )
 
-    def getTurboM(self, batch_size, max_evals,trust_regions=5, use_ard=True,  # Set to true if you want to use ARD for the GP kernel
+    def getTurboM(self, batch_size, max_evals,trust_regions=20, use_ard=True,  # Set to true if you want to use ARD for the GP kernel
     max_cholesky_size=2000,  # When we switch from Cholesky to Lanczos
     n_training_steps=50,  # Number of steps of ADAM to learn the hypers
     min_cuda=1024,  # Run on the CPU for small datasets
