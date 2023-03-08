@@ -9,16 +9,17 @@ def set_seed(seed=42):
 
         
 def getFunc(func_name):
-    match func_name:
-        case "Levy_10":
-            return Levy(10)
-        case "Levy_100":
-            return Levy(100)
-        case "Ackley_10":
-            return Ackley(10)
-        case "Ackley_100":
-            return Ackley(100)
-        case "RoverControl":
-            return RoverControl()
-        case "RobotPush":
-            return RobotPush()
+    if func_name ==  "Levy_10":
+        return Levy(10)
+    elif func_name == "Levy_100":
+        return Levy(100)
+    elif func_name ==  "Ackley_10":
+        return Ackley(10)
+    elif func_name ==  "Ackley_100":
+        return Ackley(100)
+    elif func_name ==  "RoverControl":
+        return RoverControl()
+    elif func_name ==  "RobotPush":
+        return RobotPush()
+    else:
+        raise Exception(f"Unknown func: {func_name}")

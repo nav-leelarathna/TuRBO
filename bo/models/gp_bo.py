@@ -26,6 +26,8 @@ class GP_BO:
         Y_init = self.f(X_init)
         self.bo = GPBayesianOptimization(variables_list=parameter_space,X=X_init, Y=Y_init, acquisition_type=acquisition_type, noiseless=noiseless, batch_size=batch_size)
         self.max_iterations = int(max_evals / batch_size)
+        # TODO check if this is minimising or maximising
+        self.maximising = True
 
     def optimize(self):
         self.bo.run_optimization(self.f, self.max_iterations)

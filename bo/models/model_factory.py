@@ -22,7 +22,8 @@ class ModelFactory:
         return GP_BO(f=self.f, lb=self.lb, ub=self.ub, n_init=self.n_init, acquisition_type=self.acquisition_function, max_evals=max_evals, batch_size=batch_size, noiseless=True)
     
     def getHesbo(self, low_dim, max_evals):
-        return HesBO(f=self.f, lb = self.lb, ub=self.ub, low_dim=low_dim, high_dim=self.f.dim, n_init=self.n_init, max_evals=max_evals)
+        # hesbo is a maximisation algorithm
+        return HesBO(f=self.f, lb = self.lb, ub=self.ub, low_dim=low_dim, high_dim=self.f.dim, n_init=self.n_init, max_evals=max_evals, verbose=self.verbose)
     
     def getTurbo1(self, batch_size, max_evals, use_ard=True,  # Set to true if you want to use ARD for the GP kernel
     max_cholesky_size=2000,  # When we switch from Cholesky to Lanczos
@@ -58,7 +59,7 @@ class ModelFactory:
         ub=self.ub,  # Numpy array specifying upper bounds
         n_init=self.n_init,  # Number of initial bounds from an Latin hypercube design
         max_evals = max_evals,  # Maximum number of evaluations
-        trust_regions = trust_regions,
+        n_trust_regions = trust_regions,
         batch_size=batch_size,  # How large batch size TuRBO uses
         verbose=self.verbose,  # Print information from each batch
             use_ard=use_ard,  # Set to true if you want to use ARD for the GP kernel

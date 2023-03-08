@@ -95,6 +95,7 @@ class TurboM(Turbo1):
 
         # Initialize parameters
         self._restart()
+        self.maximising = False
 
     def _restart(self):
         self._idx = np.zeros((0, 1), dtype=int)  # Track what trust region proposed what using an index vector

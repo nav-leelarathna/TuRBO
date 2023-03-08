@@ -125,6 +125,7 @@ class Turbo1:
             sys.stdout.flush()
 
         # Initialize parameters
+        self.maximising = False
         self._restart()
 
     def _restart(self):

@@ -17,7 +17,6 @@ fonttools==4.39.0
 GPy==1.10.0
 gpytorch==1.9.1
 h11==0.14.0
--e git+https://github.com/ChangYong-Oh/HyperSphere.git@ba4a849d05cd6696b7ba2c62531943ff1cb0fbb5#egg=HyperSphere&subdirectory=..\..\bock
 idna==3.4
 joblib==1.2.0
 kiwisolver==1.4.4
@@ -35,6 +34,7 @@ progressbar==2.5
 psutil==5.9.4
 pybnn==0.0.5
 pycparser==2.21
+pyDOE==0.3.8
 pygame==2.2.0
 pyparsing==3.0.9
 PySocks==1.7.1

@@ -18,6 +18,9 @@ class BaseFunction(ABC):
     def getParameterSpace(self) -> ParameterSpace:
         pass
 
+    def setSign(self,sign):
+        self.sign = sign
+
 class Ackley(BaseFunction):
     def __init__(self, dim=10, sign=1):
         # Ackley is a minimisation function
@@ -25,14 +28,18 @@ class Ackley(BaseFunction):
         self.sign = sign
         self.lb = -5 * np.ones(self.dim)
         self.ub = 5 * np.ones(self.dim)
+        self.maximising = False
 
     def __call__(self, x):
         assert len(x) == self.dim
         x = np.asarray_chkfinite(x)  # ValueError if any NaN or Inf
         n = len(x)
+        a=20
+        b=0.2
+        c=2*pi 
         s1 = sum( x**2 )
-        s2 = sum( cos( c * x ))
-        return self.sign * (-a*exp( -b*sqrt( s1 / n )) - exp( s2 / n ) + a + exp(1))
+        s2 = sum( np.cos( c * x ))
+        return self.sign * (-a*np.exp( -b*np.sqrt( s1 / n )) - np.exp( s2 / n ) + a + np.exp(1))
     
     def getParameterSpace(self) -> ParameterSpace:
         params = [ContinuousParameter(str(i),self.lb[i],self.ub[i]) for i in range(self.dim)]
@@ -45,6 +52,7 @@ class Levy(BaseFunction):
         self.dim = dim
         self.lb = -5 * np.ones(dim)
         self.ub = 10 * np.ones(dim)
+        self.maximising = False
         
     def __call__(self, x):
         def f(x):
@@ -64,12 +72,13 @@ class Levy(BaseFunction):
 
 class RobotPush(BaseFunction):
     def __init__(self, sign=-1):
-        # RobotPush is a maximisation problem, set sign depending on whether model is maximising or minimizing
+        # RobotPush is a maximisation problem, set sign depending on whether model is maximising or minimizing, 14D
         self.sign = sign
         self.f = PushReward()
         self.lb = np.array(self.f.xmin)
         self.ub = np.array(self.f.xmax)
         self.dim = len(self.f.xmin)
+        self.maximising = True
 
     def __call__(self, x):
         # flip sign to make it a minimisation problem
@@ -84,7 +93,7 @@ class RobotPush(BaseFunction):
 
 class RoverControl(BaseFunction):
     def __init__(self, sign=-1):
-        # RoverControl is a maximisation problem, set sign depending on whether model is maximising or minimizing
+        # RoverControl is a maximisation problem, set sign depending on whether model is maximising or minimizing, 60D
         self.sign = sign
         self.lb = None
         self.ub = None
@@ -94,6 +103,7 @@ class RoverControl(BaseFunction):
         dim = self.f.traj.param_size
         self.lb = np.zeros(dim)
         self.ub = np.ones(dim)
+        self.maximising = True
 
     def __call__(self, x):
         # flip sign to make it a minimisation problem
