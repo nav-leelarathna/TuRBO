@@ -1,0 +1,16 @@
+,seed,function,model,max_evals,batch_size,n_init,datapath,compute_time,function_sign,is_model_maximising
+0,0,Levy_10,hesbo,1000,10,5,data/Levy_10/sweep_results/0_Levy_10_hesbo_1000_10_5.csv,984.3534388542175,-1,True
+1,1,Levy_10,hesbo,1000,10,5,data/Levy_10/sweep_results/1_Levy_10_hesbo_1000_10_5.csv,938.2987179756165,-1,True
+2,2,Levy_10,hesbo,1000,10,5,data/Levy_10/sweep_results/2_Levy_10_hesbo_1000_10_5.csv,921.6413264274597,-1,True
+3,3,Levy_10,hesbo,1000,10,5,data/Levy_10/sweep_results/3_Levy_10_hesbo_1000_10_5.csv,935.5929489135742,-1,True
+4,4,Levy_10,hesbo,1000,10,5,data/Levy_10/sweep_results/4_Levy_10_hesbo_1000_10_5.csv,946.2462766170502,-1,True
+5,0,Levy_10,turbo1,1000,10,5,data/Levy_10/sweep_results/0_Levy_10_turbo1_1000_10_5.csv,138.56763982772827,1,False
+6,1,Levy_10,turbo1,1000,10,5,data/Levy_10/sweep_results/1_Levy_10_turbo1_1000_10_5.csv,102.74682259559631,1,False
+7,2,Levy_10,turbo1,1000,10,5,data/Levy_10/sweep_results/2_Levy_10_turbo1_1000_10_5.csv,90.94505000114441,1,False
+8,3,Levy_10,turbo1,1000,10,5,data/Levy_10/sweep_results/3_Levy_10_turbo1_1000_10_5.csv,115.9524884223938,1,False
+9,4,Levy_10,turbo1,1000,10,5,data/Levy_10/sweep_results/4_Levy_10_turbo1_1000_10_5.csv,100.05090618133545,1,False
+10,0,Levy_10,turboM,1000,10,5,data/Levy_10/sweep_results/0_Levy_10_turboM_1000_10_5.csv,399.3445403575897,1,False
+11,1,Levy_10,turboM,1000,10,5,data/Levy_10/sweep_results/1_Levy_10_turboM_1000_10_5.csv,451.6459536552429,1,False
+12,2,Levy_10,turboM,1000,10,5,data/Levy_10/sweep_results/2_Levy_10_turboM_1000_10_5.csv,440.0171175003052,1,False
+13,3,Levy_10,turboM,1000,10,5,data/Levy_10/sweep_results/3_Levy_10_turboM_1000_10_5.csv,438.049245595932,1,False
+14,4,Levy_10,turboM,1000,10,5,data/Levy_10/sweep_results/4_Levy_10_turboM_1000_10_5.csv,458.45589995384216,1,False

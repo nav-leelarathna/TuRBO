@@ -31,15 +31,20 @@ class Ackley(BaseFunction):
         self.maximising = False
 
     def __call__(self, x):
-        assert len(x) == self.dim
-        x = np.asarray_chkfinite(x)  # ValueError if any NaN or Inf
-        n = len(x)
-        a=20
-        b=0.2
-        c=2*pi 
-        s1 = sum( x**2 )
-        s2 = sum( np.cos( c * x ))
-        return self.sign * (-a*np.exp( -b*np.sqrt( s1 / n )) - np.exp( s2 / n ) + a + np.exp(1))
+        def f(x):
+            assert len(x) == self.dim
+            x = np.asarray_chkfinite(x)  # ValueError if any NaN or Inf
+            n = len(x)
+            a=20
+            b=0.2
+            c=2*np.pi 
+            s1 = sum( x**2 )
+            s2 = sum( np.cos( c * x ))
+            return self.sign * (-a*np.exp( -b*np.sqrt( s1 / n )) - np.exp( s2 / n ) + a + np.exp(1))
+        if x.ndim == 1:
+            return self.sign * f(x)
+        ret =  self.sign * np.apply_along_axis(f, 1, x).reshape((-1,1))
+        return ret
     
     def getParameterSpace(self) -> ParameterSpace:
         params = [ContinuousParameter(str(i),self.lb[i],self.ub[i]) for i in range(self.dim)]
@@ -100,14 +105,18 @@ class RoverControl(BaseFunction):
         def l2cost(x, point):
             return 10 * np.linalg.norm(x - point, 1)
         self.f = create_large_domain(False,False, l2cost, l2cost)
-        dim = self.f.traj.param_size
-        self.lb = np.zeros(dim)
-        self.ub = np.ones(dim)
+        self.dim = self.f.traj.param_size
+        self.lb = np.zeros(self.dim)
+        self.ub = np.ones(self.dim)
         self.maximising = True
 
     def __call__(self, x):
         # flip sign to make it a minimisation problem
-        return self.sign * self.f(x)
+        # return self.sign * self.f(x)
+        if x.ndim == 1:
+            return self.sign * self.f(x)
+        ret =  self.sign * np.apply_along_axis(self.f, 1, x).reshape((-1,1))
+        return ret
     
     def getParameterSpace(self):
         params = [ContinuousParameter(str(i),self.lb[i],self.ub[i]) for i in range(self.dim)]

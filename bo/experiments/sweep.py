@@ -39,17 +39,17 @@ class Sweep:
         else:
             func.setSign(-1)
         model.optimize()
-        X = model.X 
-        fX = model.fX 
+        X = model.X
+        fX = model.fX
         numEvaluations = np.array(list(range(X.size)))
-        return pd.DataFrame(list(zip(numEvaluations,X,fX)), columns=["evals","X", "fX"])
+        return pd.DataFrame(list(zip(numEvaluations,X,fX)), columns=["evals","X", "fX"]), func.sign, model.maximising
 
     def run(self):
         name = self.sweepConfig["name"]
         datapath = f"data/{name}/sweep_results"
         os.makedirs(datapath, exist_ok=True)
 
-        colNames = list(self.sweepConfig["configurations"].keys()) + ["datapath", "compute_time"]
+        colNames = list(self.sweepConfig["configurations"].keys()) + ["datapath", "compute_time", "function_sign", "is_model_maximising"]
         results = []
         instanceConfigs = self.generate_instances()
         # random.shuffle(instanceConfigs)
@@ -61,11 +61,12 @@ class Sweep:
             print(instanceConfig)
             filename = f"data/{name}/sweep_results/" + "_".join([str(i) for i in instanceConfig]) + ".csv" 
             startTime = time.time()
-            instance_results = self.run_instance(*instanceConfig)
+            instance_results,functionSign, modelMaximising = self.run_instance(*instanceConfig)
             elapsedTime = time.time() - startTime
             instance_results.to_csv(filename)
-            row = [instanceConfig[i] for i in range(len(instanceConfig))] + [filename, elapsedTime]
+            row = [instanceConfig[i] for i in range(len(instanceConfig))] + [filename, elapsedTime, functionSign,modelMaximising]
+            assert len(row) == len(colNames)
             results.append(row)   
             resultsDF = pd.DataFrame(data=results, columns=colNames)
             resultsDF.to_csv(resultsTableFilepath)
-            return
+            # return

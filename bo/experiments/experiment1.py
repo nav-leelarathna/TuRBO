@@ -51,8 +51,8 @@ def robot_push_sweep():
         "configurations": {
             "seed" : [0,1,2,3,4],
             "function" : ["RobotPush"],
-            "model" : ["gp", "hesbo", "turbo1", "turboM"],
-            "max_evals" : [2000],
+            "model" : ["hesbo", "turbo1", "turboM", "gp"],
+            "max_evals" : [1000],
             "batch_size" : [10],
             "n_init" : [5]  
         }
@@ -60,5 +60,10 @@ def robot_push_sweep():
     return sweep
 
 if __name__ == "__main__":
-    sweep = Sweep(robot_push_sweep())
-    sweep.run()
+    problems = ["Levy_10","Ackley_10","RobotPush", "RoverControl"]
+    for p in problems:
+        sweepConfig = robot_push_sweep()
+        sweepConfig["configurations"]["function"] = [p]
+        sweepConfig["name"] = p
+        sweep = Sweep(sweepConfig)
+        sweep.run()
