@@ -1,2 +1,0 @@
-,seed,function,model,max_evals,batch_size,n_init,datapath
-0,Levy,turbo1,0,50,5,5,data/test/sweep_results/Levy_turbo1_0_50_5_5.csv

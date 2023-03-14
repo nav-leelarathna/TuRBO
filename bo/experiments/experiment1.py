@@ -5,8 +5,6 @@ from bo.models import ModelFactory
 from bo.utils import set_seed, getFunc
 import numpy as np
 import pandas as pd 
-import os
-import random
 from bo.experiments.sweep import Sweep
 '''
 Things to change
@@ -49,9 +47,9 @@ def robot_push_sweep():
     sweep = {
         "name" : "robotPush",
         "configurations": {
-            "seed" : [0,1,2,3,4],
+            "seed" : [i for i in range(5)],
             "function" : ["RobotPush"],
-            "model" : ["hesbo", "turbo1", "turboM", "gp"],
+            "model" : ["hesbo", "turbo1", "turboM"],#, "gp"],
             "max_evals" : [1000],
             "batch_size" : [10],
             "n_init" : [5]  
@@ -59,11 +57,76 @@ def robot_push_sweep():
     }
     return sweep
 
+def sweep_100D():
+    sweepConfig = {
+        "name" : "100D",
+        "configurations": {
+            "seed" : [i for i in range(5)],
+            "function" : ["Levy_100", "Ackley_100"],
+            "model" : ["random","nelder-mead", "cobyla", "cmaes", "hesbo", "turbo1", "turboM"],#, "gp"],
+            "max_evals" : [1000],
+            "batch_size" : [10],
+            "n_init" : [20],
+            "noise" : [0.0]  
+        }
+    }
+    sweep = Sweep(sweepConfig)
+    sweep.run()
+
+def sweep_turbo_dimensionality():
+    sweepConfig = {
+        "name" : "turbo_dimensionality",
+        "configurations": {
+            "seed" : [i for i in range(5)],
+            "function" : ["Ackley_8","Ackley_16","Ackley_32","Ackley_64","Ackley_128", "Ackley_256"],
+            "model" : ["turbo1","turbo10","turbo20"],
+            "max_evals" : [1000],
+            "batch_size" : [10],
+            "n_init" : [20],
+            "noise" : [0.0]  
+        }
+    }
+    sweep = Sweep(sweepConfig)
+    sweep.run()
+
+def sweep_turbo_batch_size():
+    sweepConfig = {
+        "name" : "turbo_dimensionality",
+        "configurations": {
+            "seed" : [i for i in range(5)],
+            "function" : ["Ackley_64"],
+            "model" : ["turbo1","turbo10","turbo20","turbo30"],
+            "max_evals" : [2000],
+            "batch_size" : [1,10,20,30],
+            "n_init" : [20],
+            "noise" : [0.0]  
+        }
+    }
+    sweep = Sweep(sweepConfig)
+    sweep.run()
+
+def sweep_problem_ablation():
+    sweepConfig = {
+        "name" : "problem_ablation",
+        "configurations": {
+            "seed" : [i for i in range(5)],
+            "function" : ["RoverControl", "RobotPush", "Ackley_30", "Levy_10"],
+            "model" : ["random","nelder-mead", "cobyla", "cmaes", "hesbo", "turbo1", "turbo20"],
+            "max_evals" : [1000],
+            "batch_size" : [10],
+            "n_init" : [20],
+            "noise" : [0.0]  
+        }
+    }
+    sweep = Sweep(sweepConfig)
+    sweep.run()
+
 if __name__ == "__main__":
-    problems = ["Levy_10","Ackley_10","RobotPush", "RoverControl"]
-    for p in problems:
-        sweepConfig = robot_push_sweep()
-        sweepConfig["configurations"]["function"] = [p]
-        sweepConfig["name"] = p
-        sweep = Sweep(sweepConfig)
-        sweep.run()
+    globals()[sys.argv[1]]()
+    # problems = ["RobotPush", "RoverControl", "Levy_10","Ackley_10",]
+    # for p in problems:
+    #     sweepConfig = robot_push_sweep()
+    #     sweepConfig["configurations"]["function"] = [p]
+    #     sweepConfig["name"] = p
+    #     sweep = Sweep(sweepConfig)
+    #     sweep.run()

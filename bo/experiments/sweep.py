@@ -7,33 +7,51 @@ import numpy as np
 import pandas as pd 
 import os
 import time
-
 class Sweep:
     def __init__(self,sweepConfig):
         self.sweepConfig = sweepConfig 
 
     def generate_instances(self):
         configs = self.sweepConfig["configurations"]
-        return [(s,f,m, me, bs, n) for f in configs["function"] for m in configs["model"] for s in configs["seed"] for me in configs["max_evals"] for bs in configs["batch_size"]for n in configs["n_init"]]
+        return [(s,f,m, me, bs, n, noise) for f in configs["function"] for m in configs["model"] for s in configs["seed"] for me in configs["max_evals"] for bs in configs["batch_size"]for n in configs["n_init"] for noise in configs["noise"]]
 
-    def run_instance(self, seed, func, model, max_evals, batch_size, n_init):
+    def run_instance(self, seed, func, model, max_evals, batch_size, n_init, noise):
         set_seed(seed)
         func = getFunc(func)
+        # if noise > 0:
+        #     noistFunc = NoisyFunc(func)
         space = func.getParameterSpace()
         lb = np.array([p.min for p in space.parameters])
         ub = np.array([p.max for p in space.parameters])
         factory = ModelFactory(func, lb, ub, n_init)
-        match model:
-            case "gp":
-                model = factory.getGP_BO(batch_size, max_evals)
-            case "turbo1":
-                model = factory.getTurbo1(batch_size, max_evals)
-            case "turboM":
-                model = factory.getTurboM(batch_size, max_evals)
-            case "hesbo":
-                model = factory.getHesbo(low_dim=4, max_evals=max_evals)
-            case _:
-                raise Exception(f"Unknown model: {model}")
+        if func.dim > 80:
+            low_dim = 10 
+        else:
+            low_dim = 4
+        # match model:
+        if model== "gp":
+            model = factory.getGP_BO(batch_size, max_evals)
+        elif model== "turbo1":
+            model = factory.getTurbo1(batch_size, max_evals)
+        elif model[:5]=="turbo":
+            trustRegions = int(model[5:])
+            model = factory.getTurboM(batch_size=batch_size, max_evals=max_evals, trust_regions=trustRegions)
+        elif model== "hesbo":
+            model = factory.getHesbo(low_dim=low_dim, max_evals=max_evals)
+        elif model== "nelder-mead":
+            model = factory.getNelderMead(max_evals=max_evals)
+        # elif model== "bfgs":
+        #     model = factory.getBFGS(max_evals=max_evals)
+        elif model== "cobyla":
+            model = factory.getCOBYLA(max_evals=max_evals)
+        # elif model== "bobyqua":
+        #     model = factory.getBOBYQUA(max_evals=max_evals)
+        elif model== "cmaes":
+            model = factory.getCMAES(max_evals=max_evals, batch_size=batch_size, sigma=1)
+        elif model== "random":
+            model = factory.getRandom(max_evals=max_evals)
+        else:
+            raise Exception(f"Unknown model: {model}")
         if func.maximising == model.maximising:
             func.setSign(1)
         else:

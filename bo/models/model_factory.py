@@ -2,7 +2,10 @@ from bo.models.gp_bo import GP_BO
 from emukit.examples.gp_bayesian_optimization.enums import AcquisitionType
 from bo.turbo import TurboM, Turbo1
 from bo.models.my_hesbo import HesBO
-
+from bo.models.cma_es import CMA_ES
+from bo.models.minimize import Minimize
+from bo.models.bobyqua import BOBYQA
+from bo.models.random import Random
 class ModelFactory:
     def __init__(self, f,  # Handle to objective function
     lb,# Numpy array specifying lower bounds
@@ -25,6 +28,26 @@ class ModelFactory:
         # hesbo is a maximisation algorithm
         return HesBO(f=self.f, lb = self.lb, ub=self.ub, low_dim=low_dim, high_dim=self.f.dim, n_init=self.n_init, max_evals=max_evals, verbose=self.verbose)
     
+    def getCMAES(self,max_evals, batch_size, sigma):
+        mean = [(ubi - lbi)/2 for (ubi,lbi) in zip(self.ub, self.lb)]
+        return CMA_ES(f=self.f, lb=self.lb, ub=self.ub, mean=mean, max_evals=max_evals, batch_size=batch_size,sigma= sigma)
+    
+    def getNelderMead(self, max_evals):
+        return Minimize(f=self.f, lb=self.lb, ub=self.ub, max_evals=max_evals, method="Nelder-Mead")
+    
+    def getRandom(self,max_evals):
+        return Random(f=self.f,lb=self.lb, ub=self.ub, max_evals=max_evals)
+    # def getBFGS(self, max_evals):
+    #     return Minimize(f=self.f, lb=self.lb, ub=self.ub, max_evals=max_evals, method="BFGS")
+    
+    def getCOBYLA(self, max_evals):
+        return Minimize(f=self.f, lb=self.lb, ub=self.ub, max_evals=max_evals, method="COBYLA")
+    
+    # def getBOBYQUA(self, max_evals):
+    #     return BOBYQA(f=self.f, lb=self.lb, ub=self.ub, max_evals=max_evals)
+    
+    
+
     def getTurbo1(self, batch_size, max_evals, use_ard=True,  # Set to true if you want to use ARD for the GP kernel
     max_cholesky_size=2000,  # When we switch from Cholesky to Lanczos
     n_training_steps=50,  # Number of steps of ADAM to learn the hypers

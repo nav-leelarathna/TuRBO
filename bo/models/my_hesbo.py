@@ -33,6 +33,10 @@ class HesBO:
     @property
     def fX(self):
         return self._fX
+    
+    @property
+    def fX_true(self):
+        return np.array([self.f.trueFunctionValue(x) for x in self._X])
 
     
 if __name__ == "__main__":

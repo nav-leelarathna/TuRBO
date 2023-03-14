@@ -7,12 +7,21 @@ from abc import ABC, abstractmethod
 
 class BaseFunction(ABC):
     @abstractmethod
-    def __init__(self):
-        pass
+    def __init__(self,sign, dim, noiseVar):
+        self.noiseVar 
+        self.sign = sign 
+        self.dim = dim
 
-    @abstractmethod
-    def __call__(self, x) -> float:
-        pass 
+    def __call__(self, x):
+        value = self.trueFunctionValue(x)
+        if self.noiseVar  > 0:
+            return value + np.random.normal(0, self.noiseVar , value.shape)
+        else:
+            return value
+
+    @abstractmethod 
+    def trueFunctionValue(self, x) -> float:
+        pass
 
     @abstractmethod
     def getParameterSpace(self) -> ParameterSpace:
@@ -22,15 +31,16 @@ class BaseFunction(ABC):
         self.sign = sign
 
 class Ackley(BaseFunction):
-    def __init__(self, dim=10, sign=1):
+    def __init__(self, dim=10, sign=1, noiseVar=0.0):
         # Ackley is a minimisation function
         self.dim = dim  
         self.sign = sign
         self.lb = -5 * np.ones(self.dim)
         self.ub = 5 * np.ones(self.dim)
         self.maximising = False
-
-    def __call__(self, x):
+        self.noiseVar =noiseVar
+    
+    def trueFunctionValue(self, x) -> float:
         def f(x):
             assert len(x) == self.dim
             x = np.asarray_chkfinite(x)  # ValueError if any NaN or Inf
@@ -51,15 +61,16 @@ class Ackley(BaseFunction):
         return ParameterSpace(params)
 
 class Levy(BaseFunction):
-    def __init__(self, dim=10, sign=1):
+    def __init__(self, dim=10, sign=1, noiseVar=0.0):
         # Levy is a minimisation problem, set sign depending on whether model is maximising or minimising
         self.sign = sign
         self.dim = dim
         self.lb = -5 * np.ones(dim)
         self.ub = 10 * np.ones(dim)
         self.maximising = False
-        
-    def __call__(self, x):
+        self.noiseVar = noiseVar
+    
+    def trueFunctionValue(self, x) -> float:
         def f(x):
             w = 1 + (x - 1.0) / 4.0
             val = np.sin(np.pi * w[0]) ** 2 + \
@@ -76,7 +87,7 @@ class Levy(BaseFunction):
         return ParameterSpace(params)
 
 class RobotPush(BaseFunction):
-    def __init__(self, sign=-1):
+    def __init__(self, sign=-1, dim=None, noiseVar=0.0):
         # RobotPush is a maximisation problem, set sign depending on whether model is maximising or minimizing, 14D
         self.sign = sign
         self.f = PushReward()
@@ -84,8 +95,9 @@ class RobotPush(BaseFunction):
         self.ub = np.array(self.f.xmax)
         self.dim = len(self.f.xmin)
         self.maximising = True
+        self.noiseVar = noiseVar
 
-    def __call__(self, x):
+    def trueFunctionValue(self, x) -> float:
         # flip sign to make it a minimisation problem
         if x.ndim == 1:
             return self.sign * self.f(x)
@@ -97,7 +109,7 @@ class RobotPush(BaseFunction):
         return ParameterSpace(params) 
 
 class RoverControl(BaseFunction):
-    def __init__(self, sign=-1):
+    def __init__(self, sign=-1, dim=None, noiseVar=0.0):
         # RoverControl is a maximisation problem, set sign depending on whether model is maximising or minimizing, 60D
         self.sign = sign
         self.lb = None
@@ -109,8 +121,9 @@ class RoverControl(BaseFunction):
         self.lb = np.zeros(self.dim)
         self.ub = np.ones(self.dim)
         self.maximising = True
+        self.noiseVar = noiseVar
 
-    def __call__(self, x):
+    def trueFunctionValue(self, x) -> float:
         # flip sign to make it a minimisation problem
         # return self.sign * self.f(x)
         if x.ndim == 1:
@@ -121,3 +134,12 @@ class RoverControl(BaseFunction):
     def getParameterSpace(self):
         params = [ContinuousParameter(str(i),self.lb[i],self.ub[i]) for i in range(self.dim)]
         return ParameterSpace(params)
+    
+# class NoisyFunc(BaseFunction):
+#     def __init__(self,sign,dim, noiseVar):
+#         self.noiseVar = noiseVar
+#         super.__init__(sign=sign, dim=dim)
+
+#     def __call__(self, x):
+#         return addNoise(super()(x), self.noiseVar)
+
