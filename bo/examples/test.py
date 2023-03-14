@@ -12,8 +12,8 @@ from bo.models.bobyqua import BOBYQA
 from bo.models.shgo import SHGO
 from bo.models.random import Random
 import scipy
-# f = Levy(100, noiseVar=.1)#,sign=-1)  
-f = Ackley(200, noiseVar=.1)#,sign=-1)  
+f = Levy(10,sign=-1)  
+# f = Ackley(10)#,sign=-1)  
 # f = RobotPush()
 # f = RoverControl()
 
@@ -51,8 +51,8 @@ f = Ackley(200, noiseVar=.1)#,sign=-1)
 # )
 
 # model = CMA_ES(f=f,lb=f.lb, ub=f.ub, mean=[0.]*f.dim, max_evals=10000, batch_size=10,sigma= 1.3)
-model = Random(f=f,lb=f.lb, ub=f.ub, max_evals=1000)
-# model = HesBO(f=f, lb=f.lb, ub=f.ub, low_dim=4, high_dim=10, n_init=10, max_evals=100, verbose=True)
+# model = Random(f=f,lb=f.lb, ub=f.ub, max_evals=1000)
+model = HesBO(f=f, lb=f.lb, ub=f.ub, low_dim=4, high_dim=f.dim, n_init=10, max_evals=100, verbose=True)
 # model = Minimize(f=f, lb=f.lb, ub=f.ub,max_evals=1000, method="Nelder-Mead")
 # model = SHGO(f=f, lb=f.lb, ub=f.ub,max_evals=1000)
 # model = BOBYQA(f=f, lb=f.lb, ub=f.ub,max_evals=1000)
@@ -73,7 +73,7 @@ fig = plt.figure(figsize=(7, 5))
 matplotlib.rcParams.update({'font.size': 16})
 plt.plot(f.sign*fX, 'b.', ms=10)  # Plot all evaluated points as blue dots
 # plt.plot(f.sign*fX_true , 'g.', ms=5)  # Plot all evaluated points as blue dots
-plt.plot(f.sign*np.minimum.accumulate(fX), 'r', lw=3)  # Plot cumulative minimum as a red line
+plt.plot(np.minimum.accumulate(f.sign*fX), 'r', lw=3)  # Plot cumulative minimum as a red line
 # plt.plot(f.sign*np.maximum.accumulate(fX), 'r', lw=3)  # Plot cumulative minimum as a red line
 plt.xlim([0, len(fX)])
 # plt.ylim([-10, 30])

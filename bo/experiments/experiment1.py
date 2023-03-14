@@ -91,10 +91,10 @@ def sweep_turbo_dimensionality():
 
 def sweep_turbo_batch_size():
     sweepConfig = {
-        "name" : "turbo_dimensionality",
+        "name" : "turbo_batch_size",
         "configurations": {
             "seed" : [i for i in range(5)],
-            "function" : ["Ackley_64"],
+            "function" : ["Levy_32"],
             "model" : ["turbo1","turbo10","turbo20","turbo30"],
             "max_evals" : [2000],
             "batch_size" : [1,10,20,30],

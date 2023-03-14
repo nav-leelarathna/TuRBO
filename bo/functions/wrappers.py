@@ -50,7 +50,7 @@ class Ackley(BaseFunction):
             c=2*np.pi 
             s1 = sum( x**2 )
             s2 = sum( np.cos( c * x ))
-            return self.sign * (-a*np.exp( -b*np.sqrt( s1 / n )) - np.exp( s2 / n ) + a + np.exp(1))
+            return (-a*np.exp( -b*np.sqrt( s1 / n )) - np.exp( s2 / n ) + a + np.exp(1))
         if x.ndim == 1:
             return self.sign * f(x)
         ret =  self.sign * np.apply_along_axis(f, 1, x).reshape((-1,1))
