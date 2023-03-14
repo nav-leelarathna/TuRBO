@@ -10,3 +10,6 @@
 [submodule "hesbo"]
 	path = hesbo
 	url = https://github.com/aminnayebi/HesBO.git
+[submodule "my_hesbo"]
+	path = my_hesbo
+	url = git@github.com:nav-leelarathna/my_hesbo.git
