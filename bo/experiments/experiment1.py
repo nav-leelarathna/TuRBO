@@ -75,7 +75,7 @@ def sweep_100D():
 
 def sweep_turbo_dimensionality():
     sweepConfig = {
-        "name" : "turbo_dimensionality",
+        "name" : "turbo_dimensionality2",
         "configurations": {
             "seed" : [i for i in range(5)],
             "function" : ["Ackley_8","Ackley_16","Ackley_32","Ackley_64","Ackley_128", "Ackley_256"],
@@ -121,6 +121,22 @@ def sweep_problem_ablation():
     sweep = Sweep(sweepConfig)
     sweep.run()
     # sweep.mock_results_file()
+
+def sweep_turbo_m():
+    sweepConfig = {
+        "name" : "turbo1vs20",
+        "configurations": {
+            "seed" : [i for i in range(5)],
+            "function" : ["RoverControl", "RobotPush", "Ackley_30", "Levy_10"],
+            "model" : ["turbo1", "turbo20"],
+            "max_evals" : [2000],
+            "batch_size" : [50],
+            "n_init" : [50],
+            "noise" : [0.0]     
+        }
+    }
+    sweep = Sweep(sweepConfig)
+    sweep.run() 
 
 def sweep_problem_ablation_rerun():
     sweepConfig = {
