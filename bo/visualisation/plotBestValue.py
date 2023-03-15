@@ -10,6 +10,9 @@ resultsFile = "../data/robotPush/results.csv"
 resultsFile = "../data/100D/results.csv"
 turbo_batch_size = "../data/turbo_batch_size/results.csv"
 problem_ablation = "../data/problem_ablation/resultsMock.csv"
+turbo_dimensionality = "../data/turbo_dimensionality/results.csv"
+ALPHA = 0.2 
+
 def loadFile(resultsFile):
     with open(resultsFile, "r") as rf:
         df = pd.read_csv(rf)
@@ -25,8 +28,6 @@ def getSweepData(resultsFile):
         modelMaximising = df["is_model_maximising"]
         return model,function,computeTime, sign, modelMaximising, filename
 
-def summaryStats(resultsFile):
-    sweepData = getSweepData(resultsFile)
 
 def meanOfSeries(series):
     means = []
@@ -102,8 +103,8 @@ def aggregateModelFunction(df,hide=["cobyla"]):
                 fXAggs.append(fXAgg[:maxEvals])
             fXAggsMean = meanOfSeries(fXAggs)
             fXAggsStd = stdOfSeries(fXAggs,)
-            axes.plot(fXAggsMean, lw=1, label=f"{model}")
-            axes.fill_between(list(range(len(fXAggsStd))), fXAggsMean-fXAggsStd, fXAggsMean+fXAggsStd, alpha=0.3)
+            axes.plot(fXAggsMean,lw=1, label=f"{model}")
+            axes.fill_between(list(range(len(fXAggsStd))), fXAggsMean-fXAggsStd, fXAggsMean+fXAggsStd, alpha=ALPHA)
         axes.set_xlim([0, len(fXAgg)])  
         # axes.set_ylim([0, 65])  
         axes.set_title(f"Function: {func} ")
@@ -114,13 +115,47 @@ def aggregateModelFunction(df,hide=["cobyla"]):
         plt.savefig(filename)
         print(f"Saved to {filename}")
 
+def aggregateModelDimensionality(df):
+    models = df['model'].unique().tolist()
+    funcs = df['function'].unique().tolist()
+    maxEvals = df['max_evals'].unique().tolist()[0]
+    colours = ['b', 'r', 'g', 'v']
+    for h,func in enumerate(funcs):
+        fig, axes = plt.subplots()
+        for k, model in enumerate(models):
+            model_rows = df.loc[df["model"]==model]
+            model_rows = model_rows.loc[model_rows["function"]==func]
+            datapaths = model_rows["datapath"].tolist()
+            function_signs = model_rows["function_sign"].tolist()
+            models_maximising = model_rows["is_model_maximising"].tolist()
+            fXAggs = []
+            for i in range(len(datapaths)):
+                datapath = datapaths[i]
+                function_sign = function_signs[i]
+                model_maximising = models_maximising[i]
+                fXAgg = loadRunFile("../" + datapath, function_sign, model_maximising)
+                fXAggs.append(fXAgg[:maxEvals])
+            fXAggsMean = meanOfSeries(fXAggs)
+            fXAggsStd = stdOfSeries(fXAggs,)
+            axes.plot(fXAggsMean,lw=1, label=f"{model}")
+            axes.fill_between(list(range(len(fXAggsStd))), fXAggsMean-fXAggsStd, fXAggsMean+fXAggsStd, alpha=ALPHA)
+        axes.set_xlim([0, len(fXAgg)])  
+        # axes.set_ylim([0, 65])  
+        axes.set_title(f"Function: {func} ")
+        axes.grid(axis='y')
+        axes.legend()
+        fig.tight_layout()
+        filename = f"plots/m_vs_d/turbo_vs_{func}.png"
+        plt.savefig(filename)
+        print(f"Saved to {filename}")
 
 def aggregateModelBatch(df,):
-    fig, axes = plt.subplots(2,2, figsize=(10,6))
+    fig, axes = plt.subplots(2,2, figsize=(16,9))
     models = df['model'].unique().tolist()
     batchSizes = df['batch_size'].unique().tolist()
     maxEvals = df['max_evals'].unique().tolist()[0]
     colours = ['b', 'r', 'g', 'v']
+    summary = []
     for k, model in enumerate(models):
         x,y = divmod(k,2)
         for h, bs in enumerate(batchSizes):
@@ -137,10 +172,14 @@ def aggregateModelBatch(df,):
                 fXAgg = loadRunFile("../" + datapath, function_sign, model_maximising)
                 fXAggs.append(fXAgg[:maxEvals])
             fXAggsMean = meanOfSeries(fXAggs)
+            bestValue = fXAggsMean[-1]
+            summary.append([model, bs, bestValue])
             # axes[x,y].plot(fXAggsMean, lw=2, label=f"{model}_{bs}")
-            axes[x,y].plot(fXAggsMean, lw=1, label=f"batch size = {bs}")
+            axes[x,y].plot(fXAggsMean, colours[h],lw=1, label=f"batch size = {bs}")
+            fXAggsStd = stdOfSeries(fXAggs,)
+            axes[x,y].fill_between(list(range(len(fXAggsStd))), fXAggsMean-fXAggsStd, fXAggsMean+fXAggsStd, alpha=ALPHA)
         axes[x,y].set_xlim([0, len(fXAgg)])  
-        axes[x,y].set_ylim([0, 65])  
+        axes[x,y].set_ylim([0, 50])  
     # plt.ylim([-10, 30])
         axes[x,y].set_title(f"Algorithm: {model} ")
         axes[x,y].grid(axis='y')
@@ -149,6 +188,9 @@ def aggregateModelBatch(df,):
     filename = "plots/agents_vs_batch.png"
     plt.savefig(filename)
     print(f"Saved to {filename}")
+    print("Summary:")
+    for i in summary:
+        print(','.join([str(j) for j in i]))
     
 
 def loadRunFile(filepath, functionSign, modelMaximising):
@@ -212,4 +254,5 @@ def test():
 # plt.show()
 if __name__ == "__main__":
     # aggregateModelFunction(loadFile(problem_ablation))
-    aggregateModelBatch(loadFile(turbo_batch_size))
+    # aggregateModelBatch(loadFile(turbo_batch_size))
+    aggregateModelDimensionality(loadFile(turbo_dimensionality))

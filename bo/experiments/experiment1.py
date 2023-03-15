@@ -78,9 +78,9 @@ def sweep_turbo_dimensionality():
         "name" : "turbo_dimensionality2",
         "configurations": {
             "seed" : [i for i in range(5)],
-            "function" : ["Ackley_64","Ackley_128", "Ackley_256"],
-            "model" : ["turbo20", "turbo10", "turbo1"],
-            "max_evals" : [1000],
+            "function" : ["Ackley_4","Ackley_8", "Ackley_16", "Ackley_32"],
+            "model" : ["turbo10", "turbo5", "turbo1"],
+            "max_evals" : [2000],
             "batch_size" : [50],
             "n_init" : [20],
             "noise" : [0.0]  
@@ -96,7 +96,7 @@ def sweep_turbo_batch_size():
             "seed" : [i for i in range(5)],
             "function" : ["Levy_16"],
             "model" : ["turbo1","turbo4","turbo8","turbo16"],
-            "max_evals" : [2000],
+            "max_evals" : [4000],
             "batch_size" : [4,8,16],
             "n_init" : [20],
             "noise" : [0.0]  

@@ -97,7 +97,7 @@ class Sweep:
         instanceConfigs = self.generate_instances()
         # random.shuffle(instanceConfigs)
 
-        resultsTableFilepath = f"data/{name}/results2.csv"
+        resultsTableFilepath = f"data/{name}/results.csv"
         print(f"Will write results to {resultsTableFilepath}")
         for j, instanceConfig in enumerate(instanceConfigs):
             # maybe add functionality to skip if instance already contained in results.csv so that we can restart 
