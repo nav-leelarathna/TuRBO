@@ -37,8 +37,9 @@ class ModelFactory:
     
     def getRandom(self,max_evals):
         return Random(f=self.f,lb=self.lb, ub=self.ub, max_evals=max_evals)
+    
     # def getBFGS(self, max_evals):
-    #     return Minimize(f=self.f, lb=self.lb, ub=self.ub, max_evals=max_evals, method="BFGS")
+    #     return Minimize(f=self.f, lb=self.lb, ub=self.ub, max_evals=max_evals, method="L-BFGS-B")
     
     def getCOBYLA(self, max_evals):
         return Minimize(f=self.f, lb=self.lb, ub=self.ub, max_evals=max_evals, method="COBYLA")

@@ -109,9 +109,26 @@ def sweep_problem_ablation():
     sweepConfig = {
         "name" : "problem_ablation",
         "configurations": {
-            "seed" : [i for i in range(5)],
+            "seed" : [i for i in range(5,10)],
             "function" : ["RoverControl", "RobotPush", "Ackley_30", "Levy_10"],
-            "model" : ["random","nelder-mead", "cobyla", "cmaes", "hesbo", "turbo1", "turbo20"],
+            "model" : ["random","nelder-mead", "cmaes", "hesbo", "turbo1", "turbo20"],
+            "max_evals" : [1000],
+            "batch_size" : [20],
+            "n_init" : [20],
+            "noise" : [0.0]     
+        }
+    }
+    sweep = Sweep(sweepConfig)
+    sweep.run()
+    # sweep.mock_results_file()
+
+def sweep_problem_ablation_rerun():
+    sweepConfig = {
+        "name" : "sweep_problem_ablation_rerun",
+        "configurations": {
+            "seed" : [i for i in range(5)],
+            "function" : ["RoverControl","Ackley_30", "RobotPush", "Levy_10"],
+            "model" : ["nelder-mead", "hesbo"],
             "max_evals" : [1000],
             "batch_size" : [10],
             "n_init" : [20],

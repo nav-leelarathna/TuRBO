@@ -14,8 +14,9 @@ class Sweep:
     def generate_instances(self):
         configs = self.sweepConfig["configurations"]
         return [(s,f,m, me, bs, n, noise) for f in configs["function"] for m in configs["model"] for s in configs["seed"] for me in configs["max_evals"] for bs in configs["batch_size"]for n in configs["n_init"] for noise in configs["noise"]]
-
-    def run_instance(self, seed, func, model, max_evals, batch_size, n_init, noise):
+    
+    
+    def get_instance(self, seed, func, model, max_evals, batch_size, n_init, noise):
         set_seed(seed)
         func = getFunc(func)
         # if noise > 0:
@@ -40,8 +41,8 @@ class Sweep:
             model = factory.getHesbo(low_dim=low_dim, max_evals=max_evals)
         elif model== "nelder-mead":
             model = factory.getNelderMead(max_evals=max_evals)
-        # elif model== "bfgs":
-        #     model = factory.getBFGS(max_evals=max_evals)
+        elif model== "bfgs":
+            model = factory.getBFGS(max_evals=max_evals)
         elif model== "cobyla":
             model = factory.getCOBYLA(max_evals=max_evals)
         # elif model== "bobyqua":
@@ -56,11 +57,35 @@ class Sweep:
             func.setSign(1)
         else:
             func.setSign(-1)
+        return model, func
+    
+    def optimize(self, model, func):
         model.optimize()
         X = model.X
         fX = model.fX
         numEvaluations = np.array(list(range(X.size)))
         return pd.DataFrame(list(zip(numEvaluations,X,fX)), columns=["evals","X", "fX"]), func.sign, model.maximising
+    
+    def mock_results_file(self):
+        name = self.sweepConfig["name"]
+        datapath = f"data/{name}/sweep_results"
+        os.makedirs(datapath, exist_ok=True)
+
+        colNames = list(self.sweepConfig["configurations"].keys()) + ["datapath", "compute_time", "function_sign", "is_model_maximising"]
+        results = []
+        resultsTableFilepath = f"data/{name}/resultsMock.csv"
+        instanceConfigs = self.generate_instances()
+        for instanceConfig in instanceConfigs:
+            filename = f"data/{name}/sweep_results/" + "_".join([str(i) for i in instanceConfig]) + ".csv" 
+            elapsedTime = -1
+            model, func = self.get_instance(*instanceConfig)
+            functionSign = func.sign 
+            modelMaximising = model.maximising
+            row = [instanceConfig[i] for i in range(len(instanceConfig))] + [filename, elapsedTime, functionSign,modelMaximising]
+            assert len(row) == len(colNames)
+            results.append(row)   
+        resultsDF = pd.DataFrame(data=results, columns=colNames)
+        resultsDF.to_csv(resultsTableFilepath)
 
     def run(self):
         name = self.sweepConfig["name"]
@@ -72,14 +97,17 @@ class Sweep:
         instanceConfigs = self.generate_instances()
         # random.shuffle(instanceConfigs)
 
-        resultsTableFilepath = f"data/{name}/results.csv"
+        resultsTableFilepath = f"data/{name}/results2.csv"
+        print(f"Will write results to {resultsTableFilepath}")
         for j, instanceConfig in enumerate(instanceConfigs):
             # maybe add functionality to skip if instance already contained in results.csv so that we can restart 
             print(f"Starting run {j+1}/{len(instanceConfigs)}")
             print(instanceConfig)
             filename = f"data/{name}/sweep_results/" + "_".join([str(i) for i in instanceConfig]) + ".csv" 
             startTime = time.time()
-            instance_results,functionSign, modelMaximising = self.run_instance(*instanceConfig)
+            # instance_results,functionSign, modelMaximising = self.run_instance(*instanceConfig)
+            model, func = self.get_instance(*instanceConfig)
+            instance_results,functionSign, modelMaximising = self.optimize(model, func)
             elapsedTime = time.time() - startTime
             instance_results.to_csv(filename)
             row = [instanceConfig[i] for i in range(len(instanceConfig))] + [filename, elapsedTime, functionSign,modelMaximising]

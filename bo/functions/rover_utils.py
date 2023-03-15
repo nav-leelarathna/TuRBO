@@ -113,9 +113,11 @@ class RoverDomain:
 
     # return the negative cost which need to be optimized
     def __call__(self, params, n_samples=1000):
+        # print(params)
         self.set_params(params)
-
-        return -self.estimate_cost(n_samples=n_samples)
+        ret = -self.estimate_cost(n_samples=n_samples)
+        # print(ret)
+        return ret
 
     def set_params(self, params):
         self.traj.set_params(params + self.rnd_stream.normal(0, 1e-4, params.shape),

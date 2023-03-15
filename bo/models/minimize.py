@@ -7,6 +7,8 @@ class Minimize:
         self.f = f 
         self.max_evals = max_evals 
         self.method = method
+        self.lb = lb 
+        self.ub = ub
         self.bounds = [(lbi, ubi) for (lbi,ubi) in zip(lb, ub)]
         self.maximising = False
         self._X = []
@@ -24,9 +26,17 @@ class Minimize:
         x0 = [random.uniform(lbi, ubi) for (lbi,ubi) in self.bounds]
         options = {
             # "maxfev" : self.max_evals,
-            "maxiter" : self.max_evals,
+            "maxiter" : self.max_evals
             }
-        scipy.optimize.minimize(fun=self.f, x0=x0,method=self.method, bounds=self.bounds, callback=callback, options = options)
+        # constraints = []
+        # for i in range(self.f.dim):
+        #     def con1(x):
+        #         return x[i] - self.lb[i] 
+        #     def con2(x):
+        #         return self.ub[i]- x[i]
+        #     constraints.append({'type':'ineq', 'fun': con1})
+        #     constraints.append({'type':'ineq', 'fun': con2})
+        scipy.optimize.minimize(fun=self.f, x0=x0,method=self.method, bounds=self.bounds, callback=callback, options = options, tol=0.)
         self._fX = np.array(self._fX)
         self._X = np.array(self._X)
 

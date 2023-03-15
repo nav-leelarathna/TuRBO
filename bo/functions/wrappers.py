@@ -50,7 +50,8 @@ class Ackley(BaseFunction):
             c=2*np.pi 
             s1 = sum( x**2 )
             s2 = sum( np.cos( c * x ))
-            return (-a*np.exp( -b*np.sqrt( s1 / n )) - np.exp( s2 / n ) + a + np.exp(1))
+            ret =  (-a*np.exp( -b*np.sqrt( s1 / n )) - np.exp( s2 / n ) + a + np.exp(1))
+            return ret
         if x.ndim == 1:
             return self.sign * f(x)
         ret =  self.sign * np.apply_along_axis(f, 1, x).reshape((-1,1))
@@ -112,23 +113,24 @@ class RoverControl(BaseFunction):
     def __init__(self, sign=-1, dim=None, noiseVar=0.0):
         # RoverControl is a maximisation problem, set sign depending on whether model is maximising or minimizing, 60D
         self.sign = sign
-        self.lb = None
-        self.ub = None
         def l2cost(x, point):
             return 10 * np.linalg.norm(x - point, 1)
         self.f = create_large_domain(False,False, l2cost, l2cost)
         self.dim = self.f.traj.param_size
-        self.lb = np.zeros(self.dim)
-        self.ub = np.ones(self.dim)
+        self.lb = np.zeros(self.dim) - .5
+        self.ub = np.ones(self.dim) - .5
         self.maximising = True
         self.noiseVar = noiseVar
 
     def trueFunctionValue(self, x) -> float:
+        def g(x):
+            return self.f(x+0.5)
+
         # flip sign to make it a minimisation problem
         # return self.sign * self.f(x)
         if x.ndim == 1:
-            return self.sign * self.f(x)
-        ret =  self.sign * np.apply_along_axis(self.f, 1, x).reshape((-1,1))
+            return self.sign * g(x)
+        ret =  self.sign * np.apply_along_axis(g, 1, x).reshape((-1,1))
         return ret
     
     def getParameterSpace(self):
