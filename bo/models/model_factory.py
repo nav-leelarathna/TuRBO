@@ -6,6 +6,7 @@ from bo.models.cma_es import CMA_ES
 from bo.models.minimize import Minimize
 from bo.models.bobyqua import BOBYQA
 from bo.models.random import Random
+import torch 
 class ModelFactory:
     def __init__(self, f,  # Handle to objective function
     lb,# Numpy array specifying lower bounds
@@ -55,6 +56,7 @@ class ModelFactory:
     min_cuda=1024,  # Run on the CPU for small datasets
     device="cpu",  # "cpu" or "cuda"
     dtype="float64"):
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
         return Turbo1(
         f=self.f,  # Handle to objective function
         lb=self.lb,  # Numpy array specifying lower bounds
@@ -77,6 +79,7 @@ class ModelFactory:
     min_cuda=1024,  # Run on the CPU for small datasets
     device="cpu",  # "cpu" or "cuda"
     dtype="float64"):
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
         return TurboM(
         f=self.f,  # Handle to objective function
         lb=self.lb,  # Numpy array specifying lower bounds
