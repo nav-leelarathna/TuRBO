@@ -96,7 +96,7 @@ def sweep_turbo_batch_size():
             "seed" : [i for i in range(5)],
             "function" : ["Levy_16"],
             "model" : ["turbo1","turbo4","turbo8","turbo16"],
-            "max_evals" : [4000],
+            "max_evals" : [3000],
             "batch_size" : [4,8,16],
             "n_init" : [20],
             "noise" : [0.0]  
